@@ -26,34 +26,45 @@ const context = async ({ req }) => {
   // simple auth check on every request
   const auth = (req.headers && req.headers.authorization) || '';
   const email = new Buffer(auth, 'base64').toString('ascii');
-
+  console.log(`🚀 email valid ${email}`);
   // if the email isn't formatted validly, return null for user
   if (!isEmail.validate(email)) return { user: null };
+  console.log(`🚀🚀 after check email valid ${email}`);
   // find a user by their email
   const users = await store.users.findOrCreate({ where: { email } });
   const user = users && users[0] ? users[0] : null;
-
+  console.log(`🚀🚀 after check user valid ${user.email}`);
   return { user: { ...user.dataValues } };
 };
+/*
+
+
+
+
+*/
+
 
 // Set up Apollo Server
 const server = new ApolloServer({
   typeDefs,
   resolvers,
+  engine: {
+    apiKey: "service:ecomundo-scaffold:7NZBcW4aZ6GKyDFtr9qOjQ",
+    schemaTag: "dev"
+  },
   dataSources,
   context,
   engine: {
     apiKey: process.env.ENGINE_API_KEY,
     ...internalEngineDemo,
   },
+  introspection: true,
+  playground: true,
 });
-
-// Start our server if we're not in a test env.
-// if we're in a test env, we'll manually start it in a test
-if (process.env.NODE_ENV !== 'test')
-  server
-    .listen({ port: 4000 })
-    .then(({ url }) => console.log(`🚀 app running at ${url}`));
+// The `listen` method launches a web server.
+server.listen({ port: process.env.PORT || 4000 }).then(({ url }) => {
+  console.log(`🚀 Server ready at ${url}`);
+});
 
 // export all the important pieces for integration/e2e tests to use
 module.exports = {

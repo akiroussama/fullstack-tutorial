@@ -1,4 +1,5 @@
 const SQL = require('sequelize');
+const path  = require("path");
 
 module.exports.paginateResults = ({
   after: cursor,
@@ -36,11 +37,43 @@ module.exports.createStore = () => {
 
   const db = new SQL('database', 'username', 'password', {
     dialect: 'sqlite',
+    storage: path.join(__dirname, "../store.sqlite"),
+    operatorsAliases,
+    logging: true,
+  });
+  /*const path = require('path');
+  const dbPath = path.resolve(__dirname, 'database.db')
+  var db = new sqlite3.Database(dbPath);
+  */
+  /*
+ const path = require('path');
+ const dbPath = path.resolve(__dirname, 'database.db')
+ console.log('dbPath = '+dbPath);
+ const db = new SQL('database', 'username', 'password', {
+  dialect: 'sqlite',
+  storage: dbPath,
+  operatorsAliases
+});
+
+  const db = new SQL('database', 'username', 'password', {
+    dialect: 'sqlite',
     storage: './store.sqlite',
     operatorsAliases,
     logging: false,
   });
+  const dbPath = path.join(app.getPath('userData'), 'database.db');
+  log.info(`Using SQLite database at ${dbPath}`);
 
+  sequelize = new Sequelize('database', 'username', sqlCipherKey, {
+    dialect: 'sqlite',
+    storage: dbPath,
+    logging: (_sql, _settings) => {
+      // log.info(_sql.substring(0, 120));
+      // log.info(_sql);
+      // log.info(_settings);
+    },
+  });
+*/
   const users = db.define('user', {
     id: {
       type: SQL.INTEGER,
